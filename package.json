@@ -1,0 +1,23 @@
+{
+  "name": "biblioteca-diplomatura-utn",
+  "version": "1.0.0",
+  "description": "Trabajo práctico grupal de la diplomatura en desarrollo Full Stack brindada por la UTN",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Marc2p/Biblioteca-diplomatura-UTN.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Marc2p/Biblioteca-diplomatura-UTN/issues"
+  },
+  "homepage": "https://github.com/Marc2p/Biblioteca-diplomatura-UTN#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mysql": "^2.18.1"
+  }
+}
