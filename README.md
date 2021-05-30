@@ -24,6 +24,7 @@ Se trata de un proyecto de desarrollo backend en NodeJS, utilizando API Rest y b
 
 ## Grupo 9, integrantes:
 
+- Amaya, Gastón
 - Barajas, Valentín
 - De Giovannini, Augusto
 - Peirone, Marcos
