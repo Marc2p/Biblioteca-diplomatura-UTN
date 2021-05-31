@@ -102,6 +102,74 @@ app.delete('/categoria/:id', async (req, res) => {
   }
 });
 
+// Ruta Libro
+// Muestra todos los libros
+app.get('/libro', async (req, res) => {
+  try {
+    const query = 'SELECT * FROM libro';
+    const respuesta = await qy(query);
+    res.send(respuesta);
+  } catch (error) {
+    console.error(error.message);
+    res.status(413).send({ "Error": error.message });
+  }
+});
+
+// Muestra todos los libros de un género
+app.get('/libro/:id', async (req, res) => {
+  try {
+    const query = 'SELECT * FROM libro WHERE categoriaid = ?';
+    const respuesta = await qy(query, [req.params.id]);
+    if (respuesta.length === 0) {
+      throw new Error('Esa categoría no existe');
+    }
+    console.log(respuesta);
+    res.send(respuesta);
+  } catch (error) {
+    console.error(error.message);
+    res.status(413).send({ "Error": error.message });
+  }
+});
+
+// Agregar un libro
+app.post('/libro', async (req,res) => { 
+  try {
+      if (!req.body.nombre || !req.body.categoriaid) {
+          throw new Error("No enviaste los datos obligatorios: nombre y categoria");
+      }
+
+      let query = 'SELECT * FROM categoria WHERE id = ?';
+      let respuesta = await qy (query,[req.body.categoriaid]);
+
+      if (respuesta.length == 0) {
+          throw new Error("Esa categoria no existe");
+      }
+
+      query = 'SELECT * FROM libro WHERE nombre = ?';
+      respuesta = await qy (query, [req.body.nombre]);
+
+      if (respuesta.length > 0) {
+          throw new Error("Ese libro ya existe");
+      }
+      
+      let descripcion = '';
+      if (req.body.descripcion) {
+          descripcion = req.body.descripcion;
+      }
+
+      query = 'INSERT INTO libro (nombre, descripcion, categoriaid, personaid) VALUES(?, ?, ?, ?)';
+      respuesta = await qy(query, [req.body.nombre, descripcion, req.body.categoriaid, req.body.personaid]);
+
+      res.send({'respuesta': respuesta.insertId});
+
+  }
+  catch(e){
+      console.error(e.message);
+      res.status(413).send({"Error": e.message});
+  }
+});
+
+
 app.listen(port, () => {
   console.log('Servidor escuchando peticiones en el puerto ' + port);
 });
