@@ -182,6 +182,50 @@ app.post('/libro', async (req,res) => {
 });
 
 
+// ruta persona
+
+// agregamos una persona a la base de datos
+
+app.post('/persona', async (req, res) => { 
+  try {if 
+    (!req.body.nombre || !req.body.nombre.trim() ||  
+    !req.body.apellido || !req.body.apellido.trim() ||
+    !req.body.email || !req.body.email.trim() ||
+    !req.body.alias || !req.body.alias.trim())
+    
+    {throw new Error('Faltan datos');}
+    
+    const nombre = req.body.nombre.trim().toUpperCase();
+    const apellido = req.body.apellido.trim().toUpperCase();
+    const email = req.body.email.trim().toUpperCase();
+    const alias = req.body.alias.trim().toUpperCase();
+
+    // comprobamos que el mail no haya sido registrado previamente
+    
+    let query = 'SELECT id FROM categoria WHERE email = ?';
+    let respuesta = await qy(query, [email]);
+    if (respuesta.length > 0) {
+      throw new Error('El email ya se encuentra registrado');  
+    }
+    
+    // Guardar nueva persona
+
+    query ='INSERT INTO persona(nombre,apellido,email,alias) VALUES (?, ?, ?, ?)';
+    respuesta = await qy(query, [nombre, apellido, email, alias]);
+
+    res.status(200).send(
+    {"id": respuesta.insertId, 
+    "nombre": nombre, 
+    "appelido": apellido, 
+    "email":email, 
+    "alias":alias});
+
+    } catch (erorr) {
+    console.error(eror.message);
+    res.status(413).send({ mensaje: 'Error inesperado' });
+    }
+});
+
 app.listen(port, () => {
   console.log('Servidor escuchando peticiones en el puerto ' + port);
 });
