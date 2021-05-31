@@ -103,6 +103,18 @@ app.delete('/categoria/:id', async (req, res) => {
 });
 
 // Ruta Libro
+//Muestra un libro específico
+app.get('/libro/:id', async (req, res) => { 
+  try {
+    const query = 'SELECT * FROM libro WHERE id = ?';
+    const respuesta = await qy(query, [req.params.id]);
+    res.send(respuesta);
+  } catch (error) {
+    console.error(error.message);
+    res.status(413).send({ "Error": error.message });
+  }
+});
+
 // Muestra todos los libros
 app.get('/libro', async (req, res) => {
   try {
@@ -116,7 +128,7 @@ app.get('/libro', async (req, res) => {
 });
 
 // Muestra todos los libros de un género
-app.get('/libro/:id', async (req, res) => {
+app.get('/libro/categoria/:id', async (req, res) => {
   try {
     const query = 'SELECT * FROM libro WHERE categoriaid = ?';
     const respuesta = await qy(query, [req.params.id]);
