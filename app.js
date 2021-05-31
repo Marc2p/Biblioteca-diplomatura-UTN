@@ -220,7 +220,7 @@ app.post('/persona', async (req, res) => {
     "email":email, 
     "alias":alias});
 
-    } catch (erorr) {
+    } catch (error) {
     console.error(eror.message);
     res.status(413).send({ mensaje: 'Error inesperado' });
     }
