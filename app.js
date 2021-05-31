@@ -221,7 +221,7 @@ app.post('/persona', async (req, res) => {
     "alias":alias});
 
     } catch (error) {
-    console.error(eror.message);
+    console.error(error.message);
     res.status(413).send({ mensaje: 'Error inesperado' });
     }
 });
