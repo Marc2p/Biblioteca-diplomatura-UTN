@@ -146,38 +146,51 @@ app.get('/libro/categoria/:id', async (req, res) => {
 // Agregar un libro
 app.post('/libro', async (req,res) => { 
   try {
-      if (!req.body.nombre || !req.body.categoriaid) {
-          throw new Error("No enviaste los datos obligatorios: nombre y categoria");
-      }
-
-      let query = 'SELECT * FROM categoria WHERE id = ?';
-      let respuesta = await qy (query,[req.body.categoriaid]);
-
-      if (respuesta.length == 0) {
-          throw new Error("Esa categoria no existe");
-      }
-
-      query = 'SELECT * FROM libro WHERE nombre = ?';
-      respuesta = await qy (query, [req.body.nombre]);
-
-      if (respuesta.length > 0) {
-          throw new Error("Ese libro ya existe");
-      }
-      
-      let descripcion = '';
-      if (req.body.descripcion) {
-          descripcion = req.body.descripcion;
-      }
-
-      query = 'INSERT INTO libro (nombre, descripcion, categoriaid, personaid) VALUES(?, ?, ?, ?)';
-      respuesta = await qy(query, [req.body.nombre, descripcion, req.body.categoriaid, req.body.personaid]);
-
-      res.send({'respuesta': respuesta.insertId});
-
+    if (!req.body.nombre || !req.body.categoriaid) {
+      throw new Error("No enviaste los datos obligatorios: nombre y categoria");
+    }
+    let query = 'SELECT * FROM categoria WHERE id = ?';
+    let respuesta = await qy (query,[req.body.categoriaid]);
+    if (respuesta.length == 0) {
+      throw new Error("Esa categoria no existe");
+    }
+    query = 'SELECT * FROM libro WHERE nombre = ?';
+    respuesta = await qy (query, [req.body.nombre]);
+    if (respuesta.length > 0) {
+      throw new Error("Ese libro ya existe");
+    }
+    let descripcion = '';
+    if (req.body.descripcion) {
+      descripcion = req.body.descripcion;
+    }
+    query = 'INSERT INTO libro (nombre, descripcion, categoriaid, personaid) VALUES(?, ?, ?, ?)';
+    respuesta = await qy(query, [req.body.nombre, descripcion, req.body.categoriaid, req.body.personaid]);
+    res.send({'Ha sido agregado el libro ': req.body.nombre});
+  } catch (error) {
+    console.error(error.message);
+    res.status(413).send({ "Error": error.message });
   }
-  catch(e){
-      console.error(e.message);
-      res.status(413).send({"Error": e.message});
+});
+
+// Eliminar un libro
+app.delete('/libro/:id', async (req, res) => { 
+  try {
+    let query = 'SELECT * FROM libro WHERE id = ?';
+    let respuesta = await qy(query, [req.params.id]);
+    if (respuesta.length === 0) {
+      throw new Error('Ese libro no existe');
+    }
+    query = 'SELECT * FROM libro WHERE personaid = ?';
+    respuesta = await qy(query, [req.params.personaid]);
+    if (respuesta.length > 0) {
+      throw new Error('Este libro esta prestado, no se puede borrar.');
+    }
+    query = 'DELETE FROM libro WHERE id = ?';
+    respuesta = await qy(query, [req.params.id]);
+    res.send({"Mensaje": "El libro ha sido eliminado."});
+  } catch (error) {
+    console.error(error.message);
+    res.status(413).send({ "Error": error.message });
   }
 });
 
