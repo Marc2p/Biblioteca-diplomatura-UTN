@@ -103,7 +103,9 @@ app.delete('/categoria/:id', async (req, res) => {
 });
 
 // Ruta Libro
+
 //Muestra un libro específico
+
 app.get('/libro/:id', async (req, res) => { 
   try {
     const query = 'SELECT * FROM libro WHERE id = ?';
@@ -116,6 +118,7 @@ app.get('/libro/:id', async (req, res) => {
 });
 
 // Muestra todos los libros
+
 app.get('/libro', async (req, res) => {
   try {
     const query = 'SELECT * FROM libro';
@@ -128,6 +131,7 @@ app.get('/libro', async (req, res) => {
 });
 
 // Muestra todos los libros de un género
+
 app.get('/libro/categoria/:id', async (req, res) => {
   try {
     const query = 'SELECT * FROM libro WHERE categoriaid = ?';
@@ -144,6 +148,7 @@ app.get('/libro/categoria/:id', async (req, res) => {
 });
 
 // Agregar un libro
+
 app.post('/libro', async (req,res) => { 
   try {
     if (!req.body.nombre || !req.body.categoriaid) {
@@ -173,6 +178,7 @@ app.post('/libro', async (req,res) => {
 });
 
 // Eliminar un libro
+
 app.delete('/libro/:id', async (req, res) => { 
   try {
     let query = 'SELECT * FROM libro WHERE id = ?';
@@ -199,6 +205,7 @@ app.delete('/libro/:id', async (req, res) => {
 
 
 // muestra todas las personas en la base de datos
+
 app.get('/persona', async (req, res) => {
   try {
     const query = 'SELECT * FROM persona';
@@ -212,6 +219,7 @@ app.get('/persona', async (req, res) => {
 
 
 //muestra los datos de la persona con ese id
+
 app.get('/persona/:id', async (req, res) => {
   try {
     const query = 'SELECT id FROM persona WHERE personaid = ?';
@@ -231,49 +239,91 @@ app.get('/persona/:id', async (req, res) => {
 
 app.post('/persona', async (req, res) => { 
   try {
-    
-    if 
-    (!req.body.nombre ||
-      req.body.nombre === '' ||
-      !req.body.apellido ||
-      req.body.apellido === '' ||
-      !req.body.email ||
-      req.body.email === '' ||
-      !req.body.alias ||
-      req.body.alias === ''
-  )
-
-  {throw new Error('Faltan datos');}
-
-        const nombre = req.body.nombre.toUpperCase();
-        const apellido = req.body.apellido.toUpperCase();
-        const email = req.body.email.toUpperCase();
-        const alias = req.body.alias.toUpperCase();
+    if (!req.body.nombre || !req.body.apellido || !req.body.email || !req.body.alias) 
     
     
-
+    {throw new Error('Faltan datos');}
+    
+    const nombre = req.body.nombre.toUpperCase();
+    const apellido = req.body.apellido.toUpperCase();
+    const email = req.body.apellido.toUpperCase();
+    const alias = req.body.alias.toUpperCase();
+    
 // comprobamos que el mail no haya sido registrado previamente
     
-    let query = 'SELECT id FROM persona WHERE email = ?';
+    let query = 'SELECT * FROM persona WHERE email = ?';
     let respuesta = await qy(query, [email]);
     if (respuesta.length > 0) {
       throw new Error('El email ya se encuentra registrado');  
     }
-    
+
 // Guardar nueva persona
 
-    query ='INSERT INTO persona (nombre,apellido,email,alias) VALUES (?, ?, ?, ?)';
+    query ='INSERT INTO persona (nombre, apellido, email, alias) VALUES (?, ?, ?, ?)';
     respuesta = await qy(query, [nombre, apellido, email, alias]);
 
     const persona = {id: respuesta.insertId, nombre, apellido, email, alias};
     
-    res.satus(200).send(persona);
+    res.status(200).send(persona);
   }
     catch (error) {
       console.error(error.message);
       res.status(413).send({ "Error": error.message });
     }
   });
+
+// Modificar los datos de una persona en la base de datos
+
+app.put('/persona', async (req, res) => { 
+  try {
+    if (!req.body.nombre || !req.body.apellido || !req.body.email || !req.body.alias) 
+      
+      
+    {throw new Error('Faltan datos');}
+      
+    const nombre = req.body.nombre.toUpperCase();
+    const apellido = req.body.apellido.toUpperCase();
+    const email = req.body.apellido.toUpperCase();
+    const alias = req.body.alias.toUpperCase();
+
+
+    let query = 'SELECT * FROM persona WHERE id = ?';
+    let respuesta = await qy(query, [email]);
+    if (respuesta.length > 0) 
+    {throw new Error('No se encuentra esa persona');}
+
+// Guardar datos modificados pero sin modificar el email
+  
+    query = 'UPDATE persona SET nombre = ?, apellido = ?, alias = ? WHERE id = ?';
+    respuesta = await qy(query, [nombre, apellido, alias, req.params.id]);
+    
+    const person = {id: parseInt(req.params.id), nombre, apellido, 
+    email: respuestaGet[0].email,alias,};
+        
+    res.status(200).send(person);}
+      catch (e) 
+      {console.error(e.message);
+        res.status(413).send({ mensaje: 'Error inesperado' });}
+    
+
+    });
+
+  // Eiminar una persona de la base de datos
+  
+  /* SIN TERMINAR
+  
+  app.delete('persona/:id', async(req, res) => {
+    try {
+    let queryGet = 'SELECT * FROM persona WHERE id = ?';
+    let respuestaGet = await qy(queryGet, [req.params.id]);
+    if (respuestaGet.length <= 0) {
+    res.status(413).send({ mensaje: 'No existe esa persona' });
+      return;}
+    query
+    
+    SIN TERMINAR */ 
+
+
 
 app.listen(port, () => {
   console.log('Servidor escuchando peticiones en el puerto ' + port);
