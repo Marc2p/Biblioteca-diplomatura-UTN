@@ -321,7 +321,7 @@ app.put('/persona', async (req, res) => {
       return;}
     query
     
-    SIN TERMINAR */ 
+    SIN TERMINAR... */ 
 
 
 
