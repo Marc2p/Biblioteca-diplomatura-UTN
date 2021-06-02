@@ -248,7 +248,7 @@ app.get('/persona', async (req, res) => {
 
 app.get('/persona/:id', async (req, res) => {
   try {
-    const query = 'SELECT id FROM persona WHERE personaid = ?';
+    const query = 'SELECT * FROM persona WHERE id = ?';
     const respuesta = await qy(query, [req.params.id]);
     if (respuesta.length === 0) {
       throw new Error('No se encuentra esa persona');
@@ -272,7 +272,7 @@ app.post('/persona', async (req, res) => {
     
     const nombre = req.body.nombre.toUpperCase();
     const apellido = req.body.apellido.toUpperCase();
-    const email = req.body.apellido.toUpperCase();
+    const email = req.body.email.toUpperCase();
     const alias = req.body.alias.toUpperCase();
     
 // comprobamos que el mail no haya sido registrado previamente
@@ -300,11 +300,10 @@ app.post('/persona', async (req, res) => {
 
 // Modificar los datos de una persona en la base de datos
 
-app.put('/persona', async (req, res) => { 
+app.put('/persona/:id', async (req, res) => { 
   try {
     if (!req.body.nombre || !req.body.apellido || !req.body.email || !req.body.alias) 
-      
-      
+    
     {throw new Error('Faltan datos');}
       
     const nombre = req.body.nombre.toUpperCase();
@@ -322,54 +321,48 @@ app.put('/persona', async (req, res) => {
   
     query = 'UPDATE persona SET nombre = ?, apellido = ?, alias = ? WHERE id = ?';
     respuesta = await qy(query, [nombre, apellido, alias, req.params.id]);
-    
     const person = {id: parseInt(req.params.id), nombre, apellido, 
-    email: respuestaGet[0].email,alias,};
-        
+    email: respuesta[0].email,alias,};
     res.status(200).send(person);}
-      catch (e) 
-      {console.error(e.message);
-        res.status(413).send({ mensaje: 'Error inesperado' });}
-    
-
+    catch (e) 
+    {console.error(e.message);
+    res.status(413).send({ mensaje: 'Error inesperado' });}
     });
 
+
+
+  // eliminar persona
   
-  /*
-  
-    // Eiminar una persona de la base de datos
-  app.delete('persona/:id', async(req, res) => {
-    try {
-  let query = 'SELECT * FROM libro WHERE personaid = ?';
-  let respuesta = await qy(query, [req.params.id]);
-    if (respuesta.length > 0) 
-  
-  {throw new Error('esa persona tiene libros asociados, no se puede eliminar');}
+  // comprobamos que la persona no tenga libros asociados
+    
+app.delete('/persona/:id', async(req, res) => {
+  try {
+    let query = 'SELECT * FROM libro WHERE personaid = ?';
+    let respuesta = await qy(query, [req.params.id]);
+      if (respuesta.length > 0) 
+    {throw new Error('esa persona tiene libros asociados, no se puede eliminar');}
      
     
-  // comprobamos que la persona no tenga libros asociados
-  queryGet = 'SELECT * FROM persona WHERE id = ?';
-  respuestaGet = await qy(queryGet, [req.params.id]);
-  if (respuestaGet.length <= 0) 
-
-  
-  
-  {res.status(413).send({ mensaje: 'No existe esa persona' });}
+  // comprobamos que la persona exista
     
-  */
-  
-  
-  
-  
-  
-  
-  
-  
-  
+    query = 'SELECT * FROM persona WHERE id = ?';
+    respuesta = await qy(query, [req.params.id]);
+      if (respuesta.length <= 0) 
+    {throw new Error('No existe esa persona');}
     
 
+  // eliminamos la persona 
+    
+    query = 'DELETE FROM persona WHERE id = ?';
+    respuesta = await qy(query, [req.params.id]);
+    res.send({ "Mensaje": "se borro correctamente" });
+    } catch (error) {
+    console.error(error.message);
+    res.status(413).send({ "Error": error.message });}
 
-
+});
 app.listen(port, () => {
   console.log('Servidor escuchando peticiones en el puerto ' + port);
 });
+
+
