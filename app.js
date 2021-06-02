@@ -187,7 +187,7 @@ app.post('/libro', async (req,res) => {
   }
 });
 
-//Modificar datos de un libro
+//Modificar datos de un libro.
 
 app.put('/libro/:id', async (req, res) => {
   try {
