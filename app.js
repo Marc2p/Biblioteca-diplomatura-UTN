@@ -303,30 +303,33 @@ app.post('/persona', async (req, res) => {
 app.put('/persona/:id', async (req, res) => { 
   try {
     if (!req.body.nombre || !req.body.apellido || !req.body.email || !req.body.alias) 
-    
-    {throw new Error('Faltan datos');}
+    {
+      throw new Error('Faltan datos');
+    }
       
     const nombre = req.body.nombre.toUpperCase();
     const apellido = req.body.apellido.toUpperCase();
-    const email = req.body.apellido.toUpperCase();
+    const email = req.body.email.toUpperCase();
     const alias = req.body.alias.toUpperCase();
 
 
     let query = 'SELECT * FROM persona WHERE id = ?';
     let respuesta = await qy(query, [email]);
     if (respuesta.length > 0) 
-    {throw new Error('No se encuentra esa persona');}
+    {
+      throw new Error('No se encuentra esa persona');
+    }
 
 // Guardar datos modificados pero sin modificar el email
   
     query = 'UPDATE persona SET nombre = ?, apellido = ?, alias = ? WHERE id = ?';
     respuesta = await qy(query, [nombre, apellido, alias, req.params.id]);
     const person = {id: parseInt(req.params.id), nombre, apellido, 
-    email: respuesta[0].email,alias,};
+    email: respuesta.email, alias};
     res.status(200).send(person);}
-    catch (e) 
-    {console.error(e.message);
-    res.status(413).send({ mensaje: 'Error inesperado' });}
+      catch (error) 
+      {console.error(error.message);
+      res.status(413).send({ mensaje: 'Error inesperado' });}
     });
 
 
@@ -340,7 +343,9 @@ app.delete('/persona/:id', async(req, res) => {
     let query = 'SELECT * FROM libro WHERE personaid = ?';
     let respuesta = await qy(query, [req.params.id]);
       if (respuesta.length > 0) 
-    {throw new Error('esa persona tiene libros asociados, no se puede eliminar');}
+    {
+      throw new Error('esa persona tiene libros asociados, no se puede eliminar');
+    }
      
     
   // comprobamos que la persona exista
@@ -348,7 +353,9 @@ app.delete('/persona/:id', async(req, res) => {
     query = 'SELECT * FROM persona WHERE id = ?';
     respuesta = await qy(query, [req.params.id]);
       if (respuesta.length <= 0) 
-    {throw new Error('No existe esa persona');}
+    {
+      throw new Error('No existe esa persona');
+  }
     
 
   // eliminamos la persona 
@@ -358,7 +365,8 @@ app.delete('/persona/:id', async(req, res) => {
     res.send({ "Mensaje": "se borro correctamente" });
     } catch (error) {
     console.error(error.message);
-    res.status(413).send({ "Error": error.message });}
+    res.status(413).send({ "Error": error.message });
+  }
 
 });
 app.listen(port, () => {
