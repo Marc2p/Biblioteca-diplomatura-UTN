@@ -236,7 +236,7 @@ app.get('/persona', async (req, res) => {
   try {
     const query = 'SELECT * FROM persona';
     const respuesta = await qy(query);
-    res.send(respuesta);
+    res.status(200).send(respuesta);
   } catch (error) {
     console.error(error.message);
     res.status(413).send({ "Error": error.message });
@@ -254,7 +254,7 @@ app.get('/persona/:id', async (req, res) => {
       throw new Error('No se encuentra esa persona');
     }
     console.log(respuesta);
-    res.send(respuesta);
+    res.status(200).send(respuesta);
   } catch (error) {
     console.error(error.message);
     res.status(413).send({ "Error": error.message });
@@ -334,20 +334,39 @@ app.put('/persona', async (req, res) => {
 
     });
 
-  // Eiminar una persona de la base de datos
   
-  /* SIN TERMINAR
+  /*
   
+    // Eiminar una persona de la base de datos
   app.delete('persona/:id', async(req, res) => {
     try {
-    let queryGet = 'SELECT * FROM persona WHERE id = ?';
-    let respuestaGet = await qy(queryGet, [req.params.id]);
-    if (respuestaGet.length <= 0) {
-    res.status(413).send({ mensaje: 'No existe esa persona' });
-      return;}
-    query
+  let query = 'SELECT * FROM libro WHERE personaid = ?';
+  let respuesta = await qy(query, [req.params.id]);
+    if (respuesta.length > 0) 
+  
+  {throw new Error('esa persona tiene libros asociados, no se puede eliminar');}
+     
     
-    SIN TERMINAR... */ 
+  // comprobamos que la persona no tenga libros asociados
+  queryGet = 'SELECT * FROM persona WHERE id = ?';
+  respuestaGet = await qy(queryGet, [req.params.id]);
+  if (respuestaGet.length <= 0) 
+
+  
+  
+  {res.status(413).send({ mensaje: 'No existe esa persona' });}
+    
+  */
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    
 
 
 
