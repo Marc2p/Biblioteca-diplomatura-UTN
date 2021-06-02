@@ -177,6 +177,32 @@ app.post('/libro', async (req,res) => {
   }
 });
 
+//Modificar datos de un libro
+
+app.put('/libro/:id', async (req, res) => {
+  try {
+    if (!req.body.nombre || !req.body.categoriaid){
+      throw new Error('Error inesperado');
+    }
+    const nombre =  req.body.nombre.toUpperCase();
+    const categoria = req.body.categoriaid.toUpperCase();
+    
+    let query = 'SELECT * FROM libro WHERE nombre = ? AND id <> ?';
+    let respuesta = await qy(query, [req.body.nombre, req.params.id]);
+    if (respuesta.length > 0) {
+      throw new Error("El nombre del libro ya existe");
+    }
+
+    query = 'UPDATE libro SET nombre = ? WHERE id = ?';
+    respuesta = qy(query, [req.body.nombre, req.params.id]);
+    res.send({"respuesta": respuesta})
+  }
+  catch (error) {
+    console.error(error.message);
+    res.status(413).send({ "Error": error.message });
+  }
+});
+
 // Eliminar un libro
 
 app.delete('/libro/:id', async (req, res) => { 
