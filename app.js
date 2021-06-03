@@ -191,20 +191,21 @@ app.post('/libro', async (req,res) => {
 
 app.put('/libro/:id', async (req, res) => {
   try {
-    if (!req.body.nombre || !req.body.categoriaid){
-      throw new Error('Error inesperado');
+    if (req.body.nombre || req.body.categoriaid || req.body.personaid){
+      throw new Error('Solo se puede modificar la descripción del libro');
     }
-    const nombre =  req.body.nombre.toUpperCase();
     
-    let query = 'SELECT * FROM libro WHERE nombre = ? AND id <> ?';
-    let respuesta = await qy(query, [req.body.nombre, req.params.id]);
-    if (respuesta.length > 0) {
-      throw new Error('El nombre del libro ya existe');
+    let query = 'SELECT * FROM libro WHERE id = ?';
+    let respuesta = await qy(query, [req.params.id]);
+    if (respuesta.length === 0) {
+      throw new Error('Ese libro no existe');
     }
 
-    query = 'UPDATE libro SET nombre = ? WHERE id = ?';
-    respuesta = qy(query, [req.body.nombre, req.params.id]);
-    res.send({"respuesta": respuesta})
+    query = 'UPDATE libro SET descripcion = ? WHERE id = ?';
+    respuesta = qy(query, [req.body.descripcion, req.params.id]);
+    query = 'SELECT * FROM libro WHERE id = ?';
+    respuesta = await qy(query, [req.params.id]);
+    res.send(respuesta);
   }
   catch (error) {
     console.error(error.message);
