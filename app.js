@@ -213,6 +213,70 @@ app.put('/libro/:id', async (req, res) => {
   }
 });
 
+//Prestar un libro.
+
+app.put('/libro/prestar/:id', async (req, res) => {
+  try {
+    // comprobamos que exista el libro
+    let query = 'SELECT * FROM libro WHERE id = ?';
+    let respuesta = await qy(query, [req.params.id]);
+    if (respuesta.length === 0) {
+      throw new Error('No se encontró el libro');
+    }
+    // comprobamos que el libro no esté prestado
+    query = 'SELECT personaid FROM libro WHERE id = ?';
+    respuesta = await qy(query, [req.params.id]);
+    if (respuesta[0].personaid != null) {
+      throw new Error('Ese libro se encuentra prestado, no se puede prestar hasta que se devuelva');
+    }
+    // comprobamos que la persona a prestar exista
+    query = 'SELECT * FROM persona WHERE id = ?';
+    respuesta = await qy(query, [req.body.personaid]);
+    if (respuesta.length === 0) {
+      throw new Error('No se encontró la persona a la que se quiere prestar el libro');
+    }
+
+    // Prestamos el libro
+
+    query = 'UPDATE libro SET personaid = ? WHERE id = ?';
+    respuesta = qy(query, [req.body.personaid, req.params.id]);
+    res.send('Se prestó correctamente');
+  }
+  catch (error) {
+    console.error(error.message);
+    res.status(413).send({ "Error": error.message });
+  }
+});
+
+//Devolver un libro.
+
+app.put('/libro/devolver/:id', async (req, res) => {
+  try {
+    // comprobamos que exista el libro
+    let query = 'SELECT * FROM libro WHERE id = ?';
+    let respuesta = await qy(query, [req.params.id]);
+    if (respuesta.length === 0) {
+      throw new Error('No se encontró el libro');
+    }
+    // comprobamos que el libro esté prestado
+    query = 'SELECT personaid FROM libro WHERE id = ?';
+    respuesta = await qy(query, [req.params.id]);
+    if (respuesta[0].personaid === null) {
+      throw new Error('Ese libro no estaba prestado!');
+    }
+
+    // Devolvemos el libro
+
+    query = 'UPDATE libro SET personaid = null WHERE id = ?';
+    respuesta = qy(query, [req.params.id]);
+    res.send('Se realizó la devolución correctamente');
+  }
+  catch (error) {
+    console.error(error.message);
+    res.status(413).send({ "Error": error.message });
+  }
+});
+
 // Eliminar un libro
 
 app.delete('/libro/:id', async (req, res) => { 
