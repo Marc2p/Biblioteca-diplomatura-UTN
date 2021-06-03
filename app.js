@@ -275,11 +275,10 @@ app.get('/persona/:id', async (req, res) => {
 
 app.post('/persona', async (req, res) => { 
   try {
-    if (!req.body.nombre || !req.body.apellido || !req.body.email || !req.body.alias) 
-    
-    
-    {throw new Error('Faltan datos');}
-    
+    if (!req.body.nombre || !req.body.apellido || !req.body.email || !req.body.alias) {
+      throw new Error('Faltan datos');
+    }
+
     const nombre = req.body.nombre.toUpperCase();
     const apellido = req.body.apellido.toUpperCase();
     const email = req.body.email.toUpperCase();
@@ -324,8 +323,8 @@ app.put('/persona/:id', async (req, res) => {
 
 
     let query = 'SELECT * FROM persona WHERE id = ?';
-    let respuesta = await qy(query, [email]);
-    if (respuesta.length > 0) 
+    let respuesta = await qy(query, [req.params.id]);
+    if (respuesta.length === 0) 
     {
       throw new Error('No se encuentra esa persona');
     }
@@ -334,12 +333,15 @@ app.put('/persona/:id', async (req, res) => {
   
     query = 'UPDATE persona SET nombre = ?, apellido = ?, alias = ? WHERE id = ?';
     respuesta = await qy(query, [nombre, apellido, alias, req.params.id]);
-    const person = {id: parseInt(req.params.id), nombre, apellido, 
-    email: respuesta.email, alias};
-    res.status(200).send(person);}
+
+    // Muestra la persona modificada pero con el email original
+
+    query = 'SELECT * FROM persona WHERE id = ?';
+    respuesta = await qy(query, [req.params.id]);
+    res.status(200).send(respuesta);}
       catch (error) 
       {console.error(error.message);
-      res.status(413).send({ mensaje: 'Error inesperado' });}
+      res.status(413).send({ "mensaje": error.message});}
     });
 
 
