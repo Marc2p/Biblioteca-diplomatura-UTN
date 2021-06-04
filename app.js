@@ -189,24 +189,89 @@ app.post('/libro', async (req,res) => {
   }
 });
 
-//Modificar datos de un libro
+//Modificar datos de un libro.
 
 app.put('/libro/:id', async (req, res) => {
   try {
-    if (!req.body.nombre || !req.body.categoriaid){
-      throw new Error('Error inesperado');
+    if (req.body.nombre || req.body.categoriaid || req.body.personaid){
+      throw new Error('Solo se puede modificar la descripción del libro');
     }
-    const nombre =  req.body.nombre.toUpperCase();
     
-    let query = 'SELECT * FROM libro WHERE nombre = ? AND id <> ?';
-    let respuesta = await qy(query, [req.body.nombre, req.params.id]);
-    if (respuesta.length > 0) {
-      throw new Error('El nombre del libro ya existe');
+    let query = 'SELECT * FROM libro WHERE id = ?';
+    let respuesta = await qy(query, [req.params.id]);
+    if (respuesta.length === 0) {
+      throw new Error('Ese libro no existe');
     }
 
-    query = 'UPDATE libro SET nombre = ? WHERE id = ?';
-    respuesta = qy(query, [req.body.nombre, req.params.id]);
-    res.send({"respuesta": respuesta})
+    query = 'UPDATE libro SET descripcion = ? WHERE id = ?';
+    respuesta = qy(query, [req.body.descripcion, req.params.id]);
+    query = 'SELECT * FROM libro WHERE id = ?';
+    respuesta = await qy(query, [req.params.id]);
+    res.send(respuesta);
+  }
+  catch (error) {
+    console.error(error.message);
+    res.status(413).send({ "Error": error.message });
+  }
+});
+
+//Prestar un libro.
+
+app.put('/libro/prestar/:id', async (req, res) => {
+  try {
+    // comprobamos que exista el libro
+    let query = 'SELECT * FROM libro WHERE id = ?';
+    let respuesta = await qy(query, [req.params.id]);
+    if (respuesta.length === 0) {
+      throw new Error('No se encontró el libro');
+    }
+    // comprobamos que el libro no esté prestado
+    query = 'SELECT personaid FROM libro WHERE id = ?';
+    respuesta = await qy(query, [req.params.id]);
+    if (respuesta[0].personaid != null) {
+      throw new Error('Ese libro se encuentra prestado, no se puede prestar hasta que se devuelva');
+    }
+    // comprobamos que la persona a prestar exista
+    query = 'SELECT * FROM persona WHERE id = ?';
+    respuesta = await qy(query, [req.body.personaid]);
+    if (respuesta.length === 0) {
+      throw new Error('No se encontró la persona a la que se quiere prestar el libro');
+    }
+
+    // Prestamos el libro
+
+    query = 'UPDATE libro SET personaid = ? WHERE id = ?';
+    respuesta = qy(query, [req.body.personaid, req.params.id]);
+    res.send('Se prestó correctamente');
+  }
+  catch (error) {
+    console.error(error.message);
+    res.status(413).send({ "Error": error.message });
+  }
+});
+
+//Devolver un libro.
+
+app.put('/libro/devolver/:id', async (req, res) => {
+  try {
+    // comprobamos que exista el libro
+    let query = 'SELECT * FROM libro WHERE id = ?';
+    let respuesta = await qy(query, [req.params.id]);
+    if (respuesta.length === 0) {
+      throw new Error('No se encontró el libro');
+    }
+    // comprobamos que el libro esté prestado
+    query = 'SELECT personaid FROM libro WHERE id = ?';
+    respuesta = await qy(query, [req.params.id]);
+    if (respuesta[0].personaid === null) {
+      throw new Error('Ese libro no estaba prestado!');
+    }
+
+    // Devolvemos el libro
+
+    query = 'UPDATE libro SET personaid = null WHERE id = ?';
+    respuesta = qy(query, [req.params.id]);
+    res.send('Se realizó la devolución correctamente');
   }
   catch (error) {
     console.error(error.message);
@@ -276,11 +341,10 @@ app.get('/persona/:id', async (req, res) => {
 
 app.post('/persona', async (req, res) => { 
   try {
-    if (!req.body.nombre || !req.body.apellido || !req.body.email || !req.body.alias) 
-    
-    
-    {throw new Error('Faltan datos');}
-    
+    if (!req.body.nombre || !req.body.apellido || !req.body.email || !req.body.alias) {
+      throw new Error('Faltan datos');
+    }
+
     const nombre = req.body.nombre.toUpperCase();
     const apellido = req.body.apellido.toUpperCase();
     const email = req.body.email.toUpperCase();
@@ -325,8 +389,8 @@ app.put('/persona/:id', async (req, res) => {
 
 
     let query = 'SELECT * FROM persona WHERE id = ?';
-    let respuesta = await qy(query, [email]);
-    if (respuesta.length > 0) 
+    let respuesta = await qy(query, [req.params.id]);
+    if (respuesta.length === 0) 
     {
       throw new Error('No se encuentra esa persona');
     }
@@ -335,12 +399,15 @@ app.put('/persona/:id', async (req, res) => {
   
     query = 'UPDATE persona SET nombre = ?, apellido = ?, alias = ? WHERE id = ?';
     respuesta = await qy(query, [nombre, apellido, alias, req.params.id]);
-    const person = {id: parseInt(req.params.id), nombre, apellido, 
-    email: respuesta.email, alias};
-    res.status(200).send(person);}
+
+    // Muestra la persona modificada pero con el email original
+
+    query = 'SELECT * FROM persona WHERE id = ?';
+    respuesta = await qy(query, [req.params.id]);
+    res.status(200).send(respuesta);}
       catch (error) 
       {console.error(error.message);
-      res.status(413).send({ mensaje: 'Error inesperado' });}
+      res.status(413).send({ "mensaje": error.message});}
     });
 
 
