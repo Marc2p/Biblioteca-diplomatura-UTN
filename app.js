@@ -168,8 +168,9 @@ app.post('/libro', async (req,res) => {
     if (respuesta.length > 0) {
       throw new Error('Ese libro ya existe');
     }
-    const personaid = req.body.personaid;
+    let personaid;
     if(req.body.personaid) {
+      personaid = req.body.personaid;
       query = 'SELECT * FROM persona WHERE id = ?';
       respuesta = await qy (query,[personaid]);
       if (respuesta.length === 0) {
