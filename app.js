@@ -29,7 +29,7 @@ app.get('/categoria', async (req, res) => {
   try {
     const query = 'SELECT * FROM categoria';
     const respuesta = await qy(query);
-    res.send(respuesta);
+    res.status(200).send(respuesta);
   } catch (error) {
     console.error(error.message);
     res.status(413).send({ "Error": error.message });
@@ -46,7 +46,7 @@ app.get('/categoria/:id', async (req, res) => {
       throw new Error('Esa categoría no existe');
     }
     console.log(respuesta);
-    res.send(respuesta);
+    res.status(200).send(respuesta);
   } catch (error) {
     console.error(error.message);
     res.status(413).send({ "Error": error.message });
@@ -70,7 +70,7 @@ app.post('/categoria', async (req, res) => {
     // Guardar categoría
     query = 'INSERT INTO categoria (nombre) VALUE (?)';
     respuesta = await qy(query, [nombre]);
-    res.send({ "id": respuesta.insertId, "nombre": nombre });
+    res.status(200).send({ "id": respuesta.insertId, "nombre": nombre });
   } catch (error) {
     console.error(error.message);
     res.status(413).send({ "Error": error.message });
@@ -95,7 +95,7 @@ app.delete('/categoria/:id', async (req, res) => {
 
     query = 'DELETE FROM categoria WHERE ID = ?';
     respuesta = await qy(query, [req.params.id]);
-    res.send({ "Mensaje": "Se borró correctamente la categoría" });
+    res.status(200).send({ "Mensaje": "Se borró correctamente la categoría" });
   } catch (error) {
     console.error(error.message);
     res.status(413).send({ "Error": error.message });
@@ -207,7 +207,7 @@ app.put('/libro/:id', async (req, res) => {
     respuesta = qy(query, [req.body.descripcion, req.params.id]);
     query = 'SELECT * FROM libro WHERE id = ?';
     respuesta = await qy(query, [req.params.id]);
-    res.send(respuesta);
+    res.status(200).send(respuesta);
   }
   catch (error) {
     console.error(error.message);
@@ -242,7 +242,7 @@ app.put('/libro/prestar/:id', async (req, res) => {
 
     query = 'UPDATE libro SET personaid = ? WHERE id = ?';
     respuesta = qy(query, [req.body.personaid, req.params.id]);
-    res.send('Se prestó correctamente');
+    res.status(200).send('Se prestó correctamente');
   }
   catch (error) {
     console.error(error.message);
@@ -271,7 +271,7 @@ app.put('/libro/devolver/:id', async (req, res) => {
 
     query = 'UPDATE libro SET personaid = null WHERE id = ?';
     respuesta = qy(query, [req.params.id]);
-    res.send('Se realizó la devolución correctamente');
+    res.status(200).send('Se realizó la devolución correctamente');
   }
   catch (error) {
     console.error(error.message);
@@ -440,7 +440,7 @@ app.delete('/persona/:id', async(req, res) => {
     
     query = 'DELETE FROM persona WHERE id = ?';
     respuesta = await qy(query, [req.params.id]);
-    res.send({ "Mensaje": "se borro correctamente" });
+    res.status(200).send({ "Mensaje": "se borro correctamente" });
     } catch (error) {
     console.error(error.message);
     res.status(413).send({ "Error": error.message });
