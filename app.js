@@ -43,7 +43,7 @@ app.get('/categoria/:id', async (req, res) => {
     const query = 'SELECT * FROM categoria WHERE id = ?';
     const respuesta = await qy(query, [req.params.id]);
     if (respuesta.length === 0) {
-      throw new Error('Esa categoría no existe');
+      throw new Error('Categoria no encontrada');
     }
     console.log(respuesta);
     res.status(200).send(respuesta);
@@ -58,14 +58,14 @@ app.post('/categoria', async (req, res) => {
   try {
     // comprobamos que se envíe el nombre de la categoria y que no sean solo espacios en blanco
     if (!req.body.nombre || !req.body.nombre.trim()) {
-      throw new Error('Debes enviar un nombre de categoría válido. El campo no puede estar vacío ni contener solo espacios en blanco.');
+      throw new Error('Faltan datos');
     }
     const nombre = req.body.nombre.trim().toUpperCase();
     // comprobamos que la categoría no exista
     let query = 'SELECT id FROM categoria WHERE nombre = ?';
     let respuesta = await qy(query, [nombre]);
     if (respuesta.length > 0) {
-      throw new Error('Esa categoría ya existe');
+      throw new Error('Ese nombre de categoría ya existe');
     }
     // Guardar categoría
     query = 'INSERT INTO categoria (nombre) VALUE (?)';
@@ -84,16 +84,16 @@ app.delete('/categoria/:id', async (req, res) => {
     let query = 'SELECT * FROM libro WHERE categoriaid = ?';
     let respuesta = await qy(query, [req.params.id]);
     if (respuesta.length > 0) {
-      throw new Error('Esa categoría tiene libros asociados, no se puede borrar');
+      throw new Error('Categoria con libros asociados, no se puede eliminar');
     }
     // comprobamos que la categoría exista
     query = 'SELECT * FROM categoria WHERE id = ?';
     respuesta = await qy(query, [req.params.id]);
     if (respuesta.length === 0) {
-      throw new Error('Esa categoría no existe');
+      throw new Error('No existe la categoria indicada');
     }
 
-    query = 'DELETE FROM categoria WHERE ID = ?';
+    query = 'DELETE FROM categoria WHERE id = ?';
     respuesta = await qy(query, [req.params.id]);
     res.status(200).send({ "Mensaje": "Se borró correctamente la categoría" });
   } catch (error) {
@@ -230,7 +230,7 @@ app.put('/libro/prestar/:id', async (req, res) => {
     query = 'SELECT personaid FROM libro WHERE id = ?';
     respuesta = await qy(query, [req.params.id]);
     if (respuesta[0].personaid != null) {
-      throw new Error('Ese libro se encuentra prestado, no se puede prestar hasta que se devuelva');
+      throw new Error('El libro ya se encuentra prestado, no se puede prestar hasta que no se devuelva');
     }
     // comprobamos que la persona a prestar exista
     query = 'SELECT * FROM persona WHERE id = ?';
@@ -259,7 +259,7 @@ app.put('/libro/devolver/:id', async (req, res) => {
     let query = 'SELECT * FROM libro WHERE id = ?';
     let respuesta = await qy(query, [req.params.id]);
     if (respuesta.length === 0) {
-      throw new Error('No se encontró el libro');
+      throw new Error('Ese libro no existe');
     }
     // comprobamos que el libro esté prestado
     query = 'SELECT personaid FROM libro WHERE id = ?';
@@ -289,8 +289,8 @@ app.delete('/libro/:id', async (req, res) => {
     if (respuesta.length === 0) {
       throw new Error('No se encuentra ese libro');
     }
-    query = 'SELECT * FROM libro WHERE personaid = ?';
-    respuesta = await qy(query, [req.params.personaid]);
+    query = 'SELECT * FROM libro WHERE id = ? AND personaid is not null';
+    respuesta = await qy(query, [ req.params.id, req.params.personaid]);
     if (respuesta.length > 0) {
       throw new Error('Ese libro esta prestado no se puede borrar');
     }
@@ -423,7 +423,7 @@ app.delete('/persona/:id', async(req, res) => {
     let respuesta = await qy(query, [req.params.id]);
       if (respuesta.length > 0) 
     {
-      throw new Error('esa persona tiene libros asociados, no se puede eliminar');
+      throw new Error('Esa persona tiene libros asociados, no se puede eliminar');
     }
      
     
@@ -441,7 +441,7 @@ app.delete('/persona/:id', async(req, res) => {
     
     query = 'DELETE FROM persona WHERE id = ?';
     respuesta = await qy(query, [req.params.id]);
-    res.status(200).send({ "Mensaje": "se borro correctamente" });
+    res.status(200).send({ "Mensaje": "Se borro correctamente" });
     } catch (error) {
     console.error(error.message);
     res.status(413).send({ "Error": error.message });
