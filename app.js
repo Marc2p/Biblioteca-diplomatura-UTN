@@ -153,8 +153,8 @@ app.get('/libro/categoria/:id', async (req, res) => {
 
 app.post('/libro', async (req,res) => { 
   try {
-    if (!req.body.nombre || !req.body.categoriaid) {
-      throw new Error('Nombre y categoría son datos obligatorios');
+    if (!req.body.nombre || !req.body.nombre.trim() || !req.body.categoriaid) {
+      throw new Error('Nombre y categoría son datos obligatorios. El campo no puede estar vacío ni contener solo espacios en blanco.'); 
     }
     const categoriaid = req.body.categoriaid;
     let query = 'SELECT * FROM categoria WHERE id = ?';
@@ -162,7 +162,7 @@ app.post('/libro', async (req,res) => {
     if (respuesta.length === 0) {
       throw new Error('No existe la categoría indicada');
     }
-    const nombre = req.body.nombre.toUpperCase();
+    const nombre = req.body.nombre.trim().toUpperCase();
     query = 'SELECT * FROM libro WHERE nombre = ?';
     respuesta = await qy (query, [nombre]);
     if (respuesta.length > 0) {
