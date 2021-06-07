@@ -342,14 +342,15 @@ app.get('/persona/:id', async (req, res) => {
 
 app.post('/persona', async (req, res) => { 
   try {
-    if (!req.body.nombre || !req.body.apellido || !req.body.email || !req.body.alias) {
+    if (!req.body.nombre || !req.body.apellido || !req.body.email || !req.body.alias || 
+      !req.body.nombre.trim || !req.body.apellido.trim || !req.body.email.trim || !req.body.alias.trim) {
       throw new Error('Faltan datos');
     }
 
-    const nombre = req.body.nombre.toUpperCase();
-    const apellido = req.body.apellido.toUpperCase();
-    const email = req.body.email.toUpperCase();
-    const alias = req.body.alias.toUpperCase();
+    const nombre = req.body.nombre.trim().toUpperCase();
+    const apellido = req.body.apellido.trim().toUpperCase();
+    const email = req.body.email.trim().toUpperCase();
+    const alias = req.body.alias.trim().toUpperCase();
     
 // comprobamos que el mail no haya sido registrado previamente
     
