@@ -31,7 +31,6 @@ app.get('/categoria', async (req, res) => {
     const respuesta = await qy(query);
     res.status(200).send(respuesta);
   } catch (error) {
-    console.error(error.message);
     res.status(413).send({ "Error": error.message });
   }
 });
@@ -48,8 +47,11 @@ app.get('/categoria/:id', async (req, res) => {
     console.log(respuesta);
     res.status(200).send(respuesta);
   } catch (error) {
-    console.error(error.message);
-    res.status(413).send({ "Error": error.message });
+    if (error.code === undefined) {
+      res.status(413).send({ "Error": error.message });
+    } else { 
+      res.status(500).send({ "Error inesperado": error.message });
+    }
   }
 });
 
@@ -72,8 +74,11 @@ app.post('/categoria', async (req, res) => {
     respuesta = await qy(query, [nombre]);
     res.status(200).send({ "id": respuesta.insertId, "nombre": nombre });
   } catch (error) {
-    console.error(error.message);
-    res.status(413).send({ "Error": error.message });
+    if (error.code === undefined) {
+      res.status(413).send({ "Error": error.message });
+    } else { 
+      res.status(500).send({ "Error inesperado": error.message });
+    }
   }
 });
 
@@ -97,8 +102,11 @@ app.delete('/categoria/:id', async (req, res) => {
     respuesta = await qy(query, [req.params.id]);
     res.status(200).send({ "Mensaje": "Se borró correctamente la categoría" });
   } catch (error) {
-    console.error(error.message);
-    res.status(413).send({ "Error": error.message });
+    if (error.code === undefined) {
+      res.status(413).send({ "Error": error.message });
+    } else { 
+      res.status(500).send({ "Error inesperado": error.message });
+    }
   }
 });
 
@@ -115,8 +123,11 @@ app.get('/libro/:id', async (req, res) => {
     }
     res.status(200).send(respuesta);
   } catch (error) {
-    console.error(error.message);
-    res.status(413).send({ "Error": error.message });
+    if (error.code === undefined) {
+      res.status(413).send({ "Error": error.message });
+    } else { 
+      res.status(500).send({ "Error inesperado": error.message });
+    }
   }
 });
 
@@ -128,8 +139,11 @@ app.get('/libro', async (req, res) => {
     const respuesta = await qy(query);
     res.status(200).send(respuesta);
   } catch (error) {
-    console.error(error.message);
-    res.status(413).send({ "Error": error.message });
+    if (error.code === undefined) {
+      res.status(413).send({ "Error": error.message });
+    } else { 
+      res.status(500).send({ "Error inesperado": error.message });
+    }
   }
 });
 
@@ -144,8 +158,11 @@ app.get('/libro/categoria/:id', async (req, res) => {
     }
     res.status(200).send(respuesta);
   } catch (error) {
-    console.error(error.message);
-    res.status(413).send({ "Error": error.message });
+    if (error.code === undefined) {
+      res.status(413).send({ "Error": error.message });
+    } else { 
+      res.status(500).send({ "Error inesperado": error.message });
+    }
   }
 });
 
@@ -185,8 +202,11 @@ app.post('/libro', async (req,res) => {
     respuesta = await qy(query, [nombre, descripcion, categoriaid, personaid]);
     res.status(200).send({"id": respuesta.insertId, "nombre": nombre, "descripcion": descripcion, "categoria_id": categoriaid, "persona_id": personaid});
   } catch (error) {
-    console.error(error.message);
-    res.status(413).send({ "Error": error.message });
+    if (error.code === undefined) {
+      res.status(413).send({ "Error": error.message });
+    } else { 
+      res.status(500).send({ "Error inesperado": error.message });
+    }
   }
 });
 
@@ -210,8 +230,11 @@ app.put('/libro/:id', async (req, res) => {
     res.status(200).send(respuesta);
   }
   catch (error) {
-    console.error(error.message);
-    res.status(413).send({ "Error": error.message });
+    if (error.code === undefined) {
+      res.status(413).send({ "Error": error.message });
+    } else { 
+      res.status(500).send({ "Error inesperado": error.message });
+    }
   }
 });
 
@@ -245,8 +268,11 @@ app.put('/libro/prestar/:id', async (req, res) => {
     res.status(200).send('Se prestó correctamente');
   }
   catch (error) {
-    console.error(error.message);
-    res.status(413).send({ "Error": error.message });
+    if (error.code === undefined) {
+      res.status(413).send({ "Error": error.message });
+    } else { 
+      res.status(500).send({ "Error inesperado": error.message });
+    }
   }
 });
 
@@ -274,8 +300,11 @@ app.put('/libro/devolver/:id', async (req, res) => {
     res.status(200).send('Se realizó la devolución correctamente');
   }
   catch (error) {
-    console.error(error.message);
-    res.status(413).send({ "Error": error.message });
+    if (error.code === undefined) {
+      res.status(413).send({ "Error": error.message });
+    } else { 
+      res.status(500).send({ "Error inesperado": error.message });
+    }
   }
 });
 
@@ -297,8 +326,11 @@ app.delete('/libro/:id', async (req, res) => {
     respuesta = await qy(query, [req.params.id]);
     res.status(200).send({"Mensaje": "Se borró correctamente"});
   } catch (error) {
-    console.error(error.message);
-    res.status(413).send({ "Error": error.message });
+    if (error.code === undefined) {
+      res.status(413).send({ "Error": error.message });
+    } else { 
+      res.status(500).send({ "Error inesperado": error.message });
+    }
   }
 });
 
@@ -314,7 +346,6 @@ app.get('/persona', async (req, res) => {
     const respuesta = await qy(query);
     res.status(200).send(respuesta);
   } catch (error) {
-    console.error(error.message);
     res.status(413).send({ "Error": error.message });
   }
 });
@@ -332,8 +363,11 @@ app.get('/persona/:id', async (req, res) => {
     console.log(respuesta);
     res.status(200).send(respuesta);
   } catch (error) {
-    console.error(error.message);
-    res.status(413).send({ "Error": error.message });
+    if (error.code === undefined) {
+      res.status(413).send({ "Error": error.message });
+    } else { 
+      res.status(500).send({ "Error inesperado": error.message });
+    }
   }
 });
 
@@ -368,10 +402,13 @@ app.post('/persona', async (req, res) => {
     
     res.status(200).send(persona);
   }
-    catch (error) {
-      console.error(error.message);
+  catch (error) {
+    if (error.code === undefined) {
       res.status(413).send({ "Error": error.message });
+    } else { 
+      res.status(500).send({ "Error inesperado": error.message });
     }
+  }
   });
 
 // Modificar los datos de una persona en la base de datos
@@ -406,10 +443,14 @@ app.put('/persona/:id', async (req, res) => {
     query = 'SELECT * FROM persona WHERE id = ?';
     respuesta = await qy(query, [req.params.id]);
     res.status(200).send(respuesta);}
-      catch (error) 
-      {console.error(error.message);
-      res.status(413).send({ "mensaje": error.message});}
-    });
+  catch (error) {
+    if (error.code === undefined) {
+      res.status(413).send({ "Error": error.message });
+    } else { 
+      res.status(500).send({ "Error inesperado": error.message });
+    }
+  }
+});
 
 
 
@@ -443,8 +484,11 @@ app.delete('/persona/:id', async(req, res) => {
     respuesta = await qy(query, [req.params.id]);
     res.status(200).send({ "Mensaje": "Se borro correctamente" });
     } catch (error) {
-    console.error(error.message);
-    res.status(413).send({ "Error": error.message });
+    if (error.code === undefined) {
+      res.status(413).send({ "Error": error.message });
+    } else { 
+      res.status(500).send({ "Error inesperado": error.message });
+    }
   }
 
 });
