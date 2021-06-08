@@ -154,7 +154,7 @@ app.get('/libro/categoria/:id', async (req, res) => {
 app.post('/libro', async (req,res) => { 
   try {
     if (!req.body.nombre || !req.body.nombre.trim() || !req.body.categoriaid) {
-      throw new Error('Nombre y categoría son datos obligatorios. El campo no puede estar vacío ni contener solo espacios en blanco.'); 
+      throw new Error('Nombre y categoría son datos obligatorios'); 
     }
     const categoriaid = req.body.categoriaid;
     let query = 'SELECT * FROM categoria WHERE id = ?';
@@ -179,7 +179,7 @@ app.post('/libro', async (req,res) => {
     }
     let descripcion = '';
     if (req.body.descripcion) {
-      descripcion = req.body.descripcion.toUpperCase();
+      descripcion = req.body.descripcion.trim().toUpperCase();
     }
     query = 'INSERT INTO libro (nombre, descripcion, categoriaid, personaid) VALUES(?, ?, ?, ?)';
     respuesta = await qy(query, [nombre, descripcion, categoriaid, personaid]);
@@ -194,18 +194,17 @@ app.post('/libro', async (req,res) => {
 
 app.put('/libro/:id', async (req, res) => {
   try {
-    if (req.body.nombre || req.body.categoriaid || req.body.personaid){
+    if (req.body.nombre || req.body.categoriaid || req.body.personaid || !req.body.descripcion || !req.body.descripcion.trim()){
       throw new Error('Solo se puede modificar la descripción del libro');
     }
-    
+    const descripcion = req.body.descripcion.trim().toUpperCase();
     let query = 'SELECT * FROM libro WHERE id = ?';
     let respuesta = await qy(query, [req.params.id]);
     if (respuesta.length === 0) {
       throw new Error('Ese libro no existe');
     }
-
     query = 'UPDATE libro SET descripcion = ? WHERE id = ?';
-    respuesta = qy(query, [req.body.descripcion, req.params.id]);
+    respuesta = qy(query, [descripcion, req.params.id]);
     query = 'SELECT * FROM libro WHERE id = ?';
     respuesta = await qy(query, [req.params.id]);
     res.status(200).send(respuesta);
