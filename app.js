@@ -376,7 +376,7 @@ app.get('/persona/:id', async (req, res) => {
 app.post('/persona', async (req, res) => { 
   try {
     if (!req.body.nombre || !req.body.apellido || !req.body.email || !req.body.alias || 
-      !req.body.nombre.trim || !req.body.apellido.trim || !req.body.email.trim || !req.body.alias.trim) {
+      !req.body.nombre.trim() || !req.body.apellido.trim() || !req.body.email.trim() || !req.body.alias.trim()) {
       throw new Error('Faltan datos');
     }
 
@@ -416,7 +416,7 @@ app.post('/persona', async (req, res) => {
 app.put('/persona/:id', async (req, res) => { 
   try {
     if (!req.body.nombre || !req.body.apellido || !req.body.email || !req.body.alias || 
-      !req.body.nombre.trim || !req.body.apellido.trim || !req.body.email.trim || !req.body.alias.trim) {
+      !req.body.nombre.trim() || !req.body.apellido.trim() || !req.body.email.trim() || !req.body.alias.trim()) {
       throw new Error('Faltan datos');
     }
 
