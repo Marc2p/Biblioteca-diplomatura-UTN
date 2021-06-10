@@ -428,7 +428,9 @@ app.delete('/persona/:id', async(req, res) => {
     respuesta = await qy(query, [req.params.id]);
     res.status(200).send({ "Mensaje": "Se borro correctamente" });
     } catch (error) {
-    res.status(413).send({ "Error": error.message });
+        console.error(error.message);
+        res.status(413).send({ "Mensaje": "Error inesperado" });
+    
   }
 
 });
