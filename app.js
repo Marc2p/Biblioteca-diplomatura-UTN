@@ -400,7 +400,7 @@ app.put(
       ]);
       res
         .status(200)
-        .send('Se prestó correctamente');
+        .send({Mensaje:'Se prestó correctamente'});
     } catch (error) {
       res
         .status(413)
@@ -452,7 +452,7 @@ app.put(
       res
         .status(200)
         .send(
-          'Se realizó la devolución correctamente'
+          {Mensaje:'Se realizó la devolución correctamente'}
         );
     } catch (error) {
       res
