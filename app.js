@@ -39,7 +39,7 @@ app.get('/categoria', async (req, res) => {
   } catch (error) {
     res
       .status(413)
-      .send({ Error: error.message });
+      .send({ Mensaje: 'Error inesperado' });
   }
 });
 
@@ -53,14 +53,17 @@ app.get('/categoria/:id', async (req, res) => {
       req.params.id,
     ]);
     if (respuesta.length === 0) {
-      throw new Error('Categoria no encontrada');
+      res
+      .status(413)
+      .send({ Mensaje: 'Categoria no encontrada' });
+     
     }
     console.log(respuesta);
     res.status(200).send(respuesta);
   } catch (error) {
     res
       .status(413)
-      .send({ Error: error.message });
+      .send({ Mensaje: 'Error inesperado' });
   }
 });
 
@@ -72,7 +75,10 @@ app.post('/categoria', async (req, res) => {
       !req.body.nombre ||
       !req.body.nombre.trim()
     ) {
-      throw new Error('Faltan datos');
+      res
+      .status(413)
+      .send({ Mensaje: 'Faltan datos' });
+      
     }
     const nombre = req.body.nombre
       .trim()
@@ -82,9 +88,10 @@ app.post('/categoria', async (req, res) => {
       'SELECT id FROM categoria WHERE nombre = ?';
     let respuesta = await qy(query, [nombre]);
     if (respuesta.length > 0) {
-      throw new Error(
-        'Ese nombre de categoría ya existe'
-      );
+      res
+      .status(413)
+      .send({ Mensaje: 'Ese nombre de categoría ya existe' });
+      
     }
     // Guardar categoría
     query =
@@ -99,7 +106,7 @@ app.post('/categoria', async (req, res) => {
   } catch (error) {
     res
       .status(413)
-      .send({ Error: error.message });
+      .send({ Mensaje: 'Error inesperado' });
   }
 });
 
@@ -113,18 +120,20 @@ app.delete('/categoria/:id', async (req, res) => {
       req.params.id,
     ]);
     if (respuesta.length > 0) {
-      throw new Error(
-        'Categoria con libros asociados, no se puede eliminar'
-      );
+      res
+      .status(413)
+      .send({ Mensaje: 'Categoria con libros asociados, no se puede eliminar' });
+     
     }
     // comprobamos que la categoría exista
     query =
       'SELECT * FROM categoria WHERE id = ?';
     respuesta = await qy(query, [req.params.id]);
     if (respuesta.length === 0) {
-      throw new Error(
-        'No existe la categoria indicada'
-      );
+      res
+      .status(413)
+      .send({ Mensaje: 'No existe la categoria indicada' });
+      
     }
 
     query = 'DELETE FROM categoria WHERE id = ?';
@@ -138,7 +147,7 @@ app.delete('/categoria/:id', async (req, res) => {
   } catch (error) {
     res
       .status(413)
-      .send({ Error: error.message });
+      .send({ Mensaje: 'Error inesperado' });
   }
 });
 
@@ -154,15 +163,16 @@ app.get('/libro/:id', async (req, res) => {
       req.params.id,
     ]);
     if (respuesta.length === 0) {
-      throw new Error(
-        'No se encuentra ese libro'
-      );
+      res
+      .status(413)
+      .send({ Mensaje: 'No se encuentra ese libro' });
+      
     }
     res.status(200).send(respuesta);
   } catch (error) {
     res
       .status(413)
-      .send({ Error: error.message });
+      .send({ Mensaje: 'Error inesperado' });
   }
 });
 
@@ -176,7 +186,7 @@ app.get('/libro', async (req, res) => {
   } catch (error) {
     res
       .status(413)
-      .send({ Error: error.message });
+      .send({ Mensaje: 'Error inesperado' });
   }
 });
 
@@ -192,15 +202,16 @@ app.get(
         req.params.id,
       ]);
       if (respuesta.length === 0) {
-        throw new Error(
-          'Esa categoría no existe'
-        );
+        res
+      .status(413)
+      .send({ Mensaje: 'Esa categoría no existe' });
+       
       }
       res.status(200).send(respuesta);
     } catch (error) {
       res
         .status(413)
-        .send({ Error: error.message });
+        .send({ Mensaje: 'Error inesperado' });
     }
   }
 );
@@ -214,9 +225,10 @@ app.post('/libro', async (req, res) => {
       !req.body.nombre.trim() ||
       !req.body.categoriaid
     ) {
-      throw new Error(
-        'Nombre y categoría son datos obligatorios'
-      );
+      res
+        .status(413)
+        .send({ Mensaje: 'Nombre y categoría son datos obligatorios' });
+     
     }
     const categoriaid = req.body.categoriaid;
     let query =
@@ -225,9 +237,10 @@ app.post('/libro', async (req, res) => {
       categoriaid,
     ]);
     if (respuesta.length === 0) {
-      throw new Error(
-        'No existe la categoría indicada'
-      );
+      res
+        .status(413)
+        .send({ Mensaje: 'No existe la categoría indicada' });
+      
     }
     const nombre = req.body.nombre
       .trim()
@@ -236,7 +249,10 @@ app.post('/libro', async (req, res) => {
       'SELECT * FROM libro WHERE nombre = ?';
     respuesta = await qy(query, [nombre]);
     if (respuesta.length > 0) {
-      throw new Error('Ese libro ya existe');
+      res
+        .status(413)
+        .send({ Mensaje: 'Ese libro ya existe' });
+      
     }
     let personaid;
     if (req.body.personaid) {
@@ -245,9 +261,10 @@ app.post('/libro', async (req, res) => {
         'SELECT * FROM persona WHERE id = ?';
       respuesta = await qy(query, [personaid]);
       if (respuesta.length === 0) {
-        throw new Error(
-          'No existe la persona indicada'
-        );
+        res
+        .status(413)
+        .send({ Mensaje: 'No existe la persona indicada' });
+       
       }
     }
     let descripcion = '';
@@ -276,7 +293,7 @@ app.post('/libro', async (req, res) => {
   } catch (error) {
     res
       .status(413)
-      .send({ Error: error.message });
+      .send({ Mensaje: 'Error inesperado' });
   }
 });
 
@@ -291,9 +308,10 @@ app.put('/libro/:id', async (req, res) => {
       !req.body.descripcion ||
       !req.body.descripcion.trim()
     ) {
-      throw new Error(
-        'Solo se puede modificar la descripción del libro'
-      );
+      res
+      .status(413)
+      .send({ Mensaje: 'Solo se puede modificar la descripción del libro' });
+      
     }
     const descripcion = req.body.descripcion
       .trim()
@@ -304,7 +322,10 @@ app.put('/libro/:id', async (req, res) => {
       req.params.id,
     ]);
     if (respuesta.length === 0) {
-      throw new Error('Ese libro no existe');
+      res
+      .status(413)
+      .send({ Mensaje: 'Ese libro no existe' });
+      
     }
     query =
       'UPDATE libro SET descripcion = ? WHERE id = ?';
@@ -318,7 +339,7 @@ app.put('/libro/:id', async (req, res) => {
   } catch (error) {
     res
       .status(413)
-      .send({ Error: error.message });
+      .send({ Mensaje: 'Error inesperado' });
   }
 });
 
@@ -365,7 +386,7 @@ app.put(
         res
           .status(413)
           .send({
-            Mensaje: 'esa persona no existe',
+            Mensaje: 'esa persona no existe'
           });
       }
 
@@ -401,7 +422,12 @@ app.put(
         req.params.id,
       ]);
       if (respuesta.length === 0) {
-        throw new Error('Ese libro no existe');
+        res
+          .status(413)
+          .send({
+            Mensaje: 'Ese libro no existe'
+          });
+       
       }
       // comprobamos que el libro esté prestado
       query =
@@ -410,9 +436,12 @@ app.put(
         req.params.id,
       ]);
       if (respuesta[0].personaid === null) {
-        throw new Error(
-          'Ese libro no estaba prestado!'
-        );
+        res
+          .status(413)
+          .send({
+            Mensaje: 'Ese libro no estaba prestado!'
+          });
+       
       }
 
       // Devolvemos el libro
@@ -428,7 +457,7 @@ app.put(
     } catch (error) {
       res
         .status(413)
-        .send({ Error: error.message });
+        .send({ Mensaje: 'Error inesperado' });
     }
   }
 );
@@ -443,9 +472,10 @@ app.delete('/libro/:id', async (req, res) => {
       req.params.id,
     ]);
     if (respuesta.length === 0) {
-      throw new Error(
-        'No se encuentra ese libro'
-      );
+      res
+        .status(413)
+        .send({ Mensaje: 'No se encuentra ese libro' });
+      
     }
     query =
       'SELECT * FROM libro WHERE id = ? AND personaid is not null';
@@ -454,9 +484,10 @@ app.delete('/libro/:id', async (req, res) => {
       req.params.personaid,
     ]);
     if (respuesta.length > 0) {
-      throw new Error(
-        'Ese libro esta prestado no se puede borrar'
-      );
+      res
+        .status(413)
+        .send({ Mensaje: 'Ese libro esta prestado no se puede borrar' });
+      
     }
     query = 'DELETE FROM libro WHERE id = ?';
     respuesta = await qy(query, [req.params.id]);
@@ -468,7 +499,7 @@ app.delete('/libro/:id', async (req, res) => {
   } catch (error) {
     res
       .status(413)
-      .send({ Error: error.message });
+      .send({ Mensaje: 'Error inesperado' });
   }
 });
 
@@ -484,7 +515,7 @@ app.get('/persona', async (req, res) => {
   } catch (error) {
     res
       .status(413)
-      .send({ Error: error.message });
+      .send({ Mensaje: 'Error inesperado' });
   }
 });
 
@@ -498,16 +529,17 @@ app.get('/persona/:id', async (req, res) => {
       req.params.id,
     ]);
     if (respuesta.length === 0) {
-      throw new Error(
-        'No se encuentra esa persona'
-      );
+      res
+        .status(413)
+        .send({ Mensaje: 'No se encuentra esa persona' });
+      
     }
     console.log(respuesta);
     res.status(200).send(respuesta);
   } catch (error) {
     res
       .status(413)
-      .send({ Error: error.message });
+      .send({ Mensaje: 'Error inesperado' });
   }
 });
 
@@ -525,7 +557,10 @@ app.post('/persona', async (req, res) => {
       !req.body.email.trim() ||
       !req.body.alias.trim()
     ) {
-      throw new Error('Faltan datos');
+      res
+      .status(413)
+      .send({ Mensaje: 'Faltan datos' });
+      
     }
 
     const nombre = req.body.nombre
@@ -547,9 +582,10 @@ app.post('/persona', async (req, res) => {
       'SELECT * FROM persona WHERE email = ?';
     let respuesta = await qy(query, [email]);
     if (respuesta.length > 0) {
-      throw new Error(
-        'El email ya se encuentra registrado'
-      );
+      res
+      .status(413)
+      .send({ Mensaje: 'El email ya se encuentra registrado' });
+      
     }
 
     // Guardar nueva persona
@@ -575,7 +611,7 @@ app.post('/persona', async (req, res) => {
   } catch (error) {
     res
       .status(413)
-      .send({ Error: error.message });
+      .send({ Mensaje: 'Error inesperado' });
   }
 });
 
@@ -593,7 +629,10 @@ app.put('/persona/:id', async (req, res) => {
       !req.body.email.trim() ||
       !req.body.alias.trim()
     ) {
-      throw new Error('Faltan datos');
+      res
+      .status(413)
+      .send({ Mensaje: 'Faltan datos' });
+      
     }
 
     const nombre = req.body.nombre
@@ -612,9 +651,10 @@ app.put('/persona/:id', async (req, res) => {
       req.params.id,
     ]);
     if (respuesta.length === 0) {
-      throw new Error(
-        'No se encuentra esa persona'
-      );
+      res
+      .status(413)
+      .send({ Mensaje: 'No se encuentra esa persona' });
+      
     }
 
     // Guardar datos modificados pero sin modificar el email
@@ -636,7 +676,7 @@ app.put('/persona/:id', async (req, res) => {
   } catch (error) {
     res
       .status(413)
-      .send({ Error: error.message });
+      .send({ Mensaje: 'Error inesperado' });
   }
 });
 
@@ -652,9 +692,10 @@ app.delete('/persona/:id', async (req, res) => {
       req.params.id,
     ]);
     if (respuesta.length > 0) {
-      throw new Error(
-        'Esa persona tiene libros asociados, no se puede eliminar'
-      );
+      res
+      .status(413)
+      .send({ Mensaje: 'Esa persona tiene libros asociados, no se puede eliminar' });
+     
     }
 
     // comprobamos que la persona exista
@@ -662,7 +703,10 @@ app.delete('/persona/:id', async (req, res) => {
     query = 'SELECT * FROM persona WHERE id = ?';
     respuesta = await qy(query, [req.params.id]);
     if (respuesta.length <= 0) {
-      throw new Error('No existe esa persona');
+      res
+      .status(413)
+      .send({ Mensaje: 'No existe esa persona' });
+   
     }
 
     // eliminamos la persona
@@ -677,7 +721,7 @@ app.delete('/persona/:id', async (req, res) => {
   } catch (error) {
     res
       .status(413)
-      .send({ Error: error.message });
+      .send({ Mensaje: 'Error inesperado' });
   }
 });
 app.listen(port, () => {
