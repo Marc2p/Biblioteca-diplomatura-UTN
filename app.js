@@ -10,10 +10,10 @@ const app = express(); // crea la aplicación con express
 app.use(express.json()); // permite el mapeo de la peticion json a object js
 // crea la conexión con la base de datos
 const conection = mysql.createConnection({
-  host: 'freedb.tech',
-  user: 'freedbtech_biblioutn',
-  password: 'A1B2C3',
-  database: 'freedbtech_bibliotecatpgrupalutn',
+  host: 'sql10.freemysqlhosting.net',
+  user: 'sql10425932',
+  password: 'LJicmagkAM',
+  database: 'sql10425932',
 });
 
 // comprueba la conexión con la base de datos
