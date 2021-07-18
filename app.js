@@ -222,8 +222,9 @@ app.post('/libro', async (req, res) => {
   try {
     if (
       !req.body.nombre ||
-      !req.body.nombre.trim() ||
-      !req.body.categoriaid
+      (req.body.nombre && 
+        !req.body.nombre.trim()) || 
+        !req.body.categoriaid
     ) {
       res
         .status(413)
@@ -481,7 +482,7 @@ app.delete('/libro/:id', async (req, res) => {
       'SELECT * FROM libro WHERE id = ? AND personaid is not null';
     respuesta = await qy(query, [
       req.params.id,
-      req.params.personaid,
+      
     ]);
     if (respuesta.length > 0) {
       res
@@ -601,10 +602,10 @@ app.post('/persona', async (req, res) => {
 
     const persona = {
       id: respuesta.insertId,
-      nombre,
-      apellido,
-      email,
-      alias,
+      nombre:nombre,
+      apellido:apellido,
+      email:email,
+      alias:alias,
     };
 
     res.status(200).send(persona);
