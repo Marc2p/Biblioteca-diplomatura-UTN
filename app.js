@@ -6,8 +6,11 @@ const mysql = require('mysql'); // añade el paquete mysql al script
 const util = require('util'); // Permite asincronismo en las consultas a la base de datos
 const port = 3000; // Establece el puerto donde funcionará el servidor
 const app = express(); // crea la aplicación con express
+const cors = require ('cors'); // Agrega CORS
 
 app.use(express.json()); // permite el mapeo de la peticion json a object js
+app.use(cors({origin: "http://localhost:3001", credentials: true})); // Permite el acceso del cliente React a los recursos servidor
+
 // crea la conexión con la base de datos
 const conection = mysql.createConnection({
   host: 'sql10.freemysqlhosting.net',
