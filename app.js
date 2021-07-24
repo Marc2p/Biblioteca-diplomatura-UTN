@@ -225,9 +225,10 @@ app.post('/libro', async (req, res) => {
   try {
     if (
       !req.body.nombre ||
-      (req.body.nombre && 
-        !req.body.nombre.trim()) || 
-        !req.body.categoriaid
+      !req.body.categoriaid ||
+      !req.body.nombre.trim() 
+      
+      
     ) {
       res
         .status(413)
@@ -296,6 +297,7 @@ app.post('/libro', async (req, res) => {
       });
   } catch (error) {
     res
+      
       .status(413)
       .send({ Mensaje: 'Error inesperado' });
   }
