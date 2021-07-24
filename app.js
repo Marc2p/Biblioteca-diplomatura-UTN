@@ -14,9 +14,9 @@ app.use(cors({origin: "http://localhost:3001", credentials: true})); // Permite 
 // crea la conexión con la base de datos
 const conection = mysql.createConnection({
   host: 'sql10.freemysqlhosting.net',
-  user: 'sql10425932',
-  password: 'LJicmagkAM',
-  database: 'sql10425932',
+  user: 'sql10427392',
+  password: 'PGamyf4lGQ',
+  database: 'sql10427392',
 });
 
 // comprueba la conexión con la base de datos
