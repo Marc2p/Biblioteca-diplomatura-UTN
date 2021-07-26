@@ -199,15 +199,25 @@ app.get(
   '/libro/categoria/:id',
   async (req, res) => {
     try {
-      const query =
-        'SELECT * FROM libro WHERE categoriaid = ?';
-      const respuesta = await qy(query, [
+      let query =
+        'SELECT * FROM categoria WHERE id = ?';
+      let respuesta = await qy(query, [
         req.params.id,
       ]);
       if (respuesta.length === 0) {
         res
       .status(413)
-      .send({ Mensaje: 'Esa categoría no existe' });
+      .send({ Mensaje: 'Categoria no encontrada' });
+    }
+      query =
+        'SELECT * FROM libro WHERE categoriaid = ?';
+      respuesta = await qy(query, [
+        req.params.id,
+      ]);
+      if (respuesta.length === 0) {
+        res
+      .status(413)
+      .send({ Mensaje: 'No hay libros asociados a esa categoria' });
        
       }
       res.status(200).send(respuesta);
