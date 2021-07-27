@@ -229,6 +229,42 @@ app.get(
   }
 );
 
+// Muestra todos los libros de una persona
+
+app.get(
+  '/libro/persona/:id',
+  async (req, res) => {
+    try {
+      let query =
+        'SELECT * FROM persona WHERE id = ?';
+      let respuesta = await qy(query, [
+        req.params.id,
+      ]);
+      if (respuesta.length === 0) {
+        res
+      .status(413)
+      .send({ Mensaje: 'Persona no encontrada' });
+    }
+      query =
+        'SELECT * FROM libro WHERE personaid = ?';
+      respuesta = await qy(query, [
+        req.params.id,
+      ]);
+      if (respuesta.length === 0) {
+        res
+      .status(413)
+      .send({ Mensaje: 'No hay libros asociados a esta persona' });
+       
+      }
+      res.status(200).send(respuesta);
+    } catch (error) {
+      res
+        .status(413)
+        .send({ Mensaje: 'Error inesperado' });
+    }
+  }
+);
+
 // Agregar un libro
 
 app.post('/libro', async (req, res) => {
