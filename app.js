@@ -154,6 +154,42 @@ app.delete('/categoria/:id', async (req, res) => {
   }
 });
 
+// Modificar categoria
+app.put('/categoria/:id', async (req, res) => {
+  try {
+    if (
+      !req.body.nombre ||
+      !req.body.nombre.trim() 
+     
+    ) {
+      res
+      .status(413)
+      .send({ Mensaje: 'Faltan datos' });
+      
+    }
+
+    const nombre = req.body.nombre
+      .trim()
+      .toUpperCase();
+    
+    let query =
+    'UPDATE categoria SET nombre = ? WHERE id = ?';
+    let respuesta = await qy(query, [
+    nombre, req.params.id,
+    
+  ]);
+
+  // Muestra la persona modificada pero con el email original
+
+  query = 'SELECT * FROM categoria WHERE id = ?';
+  respuesta = await qy(query, [req.params.id]);
+  res.status(200).send(respuesta);
+} catch (error) {
+  console.log(error)
+}
+}
+);
+
 // Ruta Libro
 
 // Muestra un libro específico
@@ -726,9 +762,7 @@ app.put('/persona/:id', async (req, res) => {
     respuesta = await qy(query, [req.params.id]);
     res.status(200).send(respuesta);
   } catch (error) {
-    res
-      .status(413)
-      .send({ Mensaje: 'Error inesperado' });
+    console.log(error)
   }
 });
 
